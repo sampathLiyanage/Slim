@@ -12,22 +12,7 @@ class JobEndPoint extends ResourceEndpoint
 {
 
     public function post($request, $response) {
-        $params = $request->getParsedBody();
-        try {
-            $query = "INSERT INTO job (job_title,salary) VALUES (?,?)";
-
-            $stmt = $this->db->prepare($query);
-            $stmt->execute(array(
-                $params['job_title'],
-                $params['salary']
-            ));
-            $response = $response->withStatus(201);
-        } catch(Exception $e) {
-            $response = $response->withStatus(500);
-            $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-        }
-
-        return $response;
+        // TODO: Implement post() method.
     }
 
     public function get($request, $response) {
