@@ -4,10 +4,17 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
-spl_autoload_register(function ($classname) {
-    require ("../classes/" . $classname . ".php");
-});
+$config = [
+    'settings' => [
+        'displayErrorDetails' => true,
 
+        'logger' => [
+            'name' => 'slim-app',
+            'level' => Monolog\Logger::DEBUG,
+            'path' => __DIR__ . '/../logs/app.log',
+        ],
+    ],
+];
 $config['displayErrorDetails'] = true;
 $config['addContentLengthHeader'] = false;
 
@@ -33,200 +40,27 @@ $container['db'] = function ($c) {
     return $pdo;
 };
 
-$app->get('/hello/{name}', function (Request $request, Response $response) {
-    $name = $request->getAttribute('name');
-    $response->getBody()->write("Hello, $name");
-
-    return $response;
-});
-
 //employees
-$app->get('/employees', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    try {
-        $query = "SELECT * FROM employee";
+$app->get('/employees', '\EmployeesEndPoint:get');
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-        $response = $response->withStatus(200);
-        $response->getBody()->write(json_encode($result));
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->get('/employee/{id}', '\EmployeeEndPoint:get');
 
-$app->get('/employee/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    try {
-        $query = "SELECT * FROM employee WHERE id = ?";
+$app->post('/employees', '\EmployeeEndPoint:post');
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array($id));
-        $result = $stmt->fetchAll();
-        $response = $response->withStatus(200);
-        $response->getBody()->write(json_encode($result[0]));
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->put('/employee/{id}', '\EmployeeEndPoint:put');
 
-$app->post('/employees', function (Request $request, Response $response) {
-    $params = $request->getParsedBody();
-    try {
-        $query = "INSERT INTO employee (first_name,last_name,email,phone_no) VALUES (?,?,?,?)";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $params['first_name'],
-            $params['last_name'],
-            $params['email'],
-            $params['phone_no']
-        ));
-        $response = $response->withStatus(201);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-
-    return $response;
-});
-
-$app->put('/employee/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    $params = $request->getParsedBody();
-    try {
-        $query = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, phone_no = ? Where id=?";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $params['first_name'],
-            $params['last_name'],
-            $params['email'],
-            $params['phone_no'],
-            $id
-        ));
-        $response = $response->withStatus(200);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
-
-$app->delete('/employee/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    $params = $request->getParsedBody();
-    try {
-        $query = "DELETE FROM employee WHERE id = ?";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $id
-        ));
-        $response = $response->withStatus(200);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->delete('/employee/{id}', '\EmployeeEndPoint:delete');
 
 //job
-$app->get('/jobs', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    try {
-        $query = "SELECT * FROM job";
+$app->get('/jobs', '\JobsEndPoint:get');
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute();
-        $result = $stmt->fetchAll();
-        $response = $response->withStatus(200);
-        $response->getBody()->write(json_encode($result));
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->get('/job/{id}', '\JobEndPoint:get');
 
-$app->get('/job/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    try {
-        $query = "SELECT * FROM job WHERE id = ?";
+$app->post('/jobs', '\JobEndPoint:post');
 
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array($id));
-        $result = $stmt->fetchAll();
-        $response = $response->withStatus(200);
-        $response->getBody()->write(json_encode($result[0]));
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->put('/job/{id}', '\JobEndPoint:put');
 
-$app->post('/jobs', function (Request $request, Response $response) {
-    $params = $request->getParsedBody();
-    try {
-        $query = "INSERT INTO job (job_title,salary) VALUES (?,?)";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $params['job_title'],
-            $params['salary']
-        ));
-        $response = $response->withStatus(201);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-
-    return $response;
-});
-
-$app->put('/job/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    $params = $request->getParsedBody();
-    try {
-        $query = "UPDATE job SET job_title = ?, salary = ? Where id=?";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $params['job_title'],
-            $params['salary'],
-            $id
-        ));
-        $response = $response->withStatus(200);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
-
-$app->delete('/job/{id}', function (Request $request, Response $response) {
-    $id = $request->getAttribute('id');
-    $params = $request->getParsedBody();
-    try {
-        $query = "DELETE FROM job WHERE id = ?";
-
-        $stmt = $this->db->prepare($query);
-        $stmt->execute(array(
-            $id
-        ));
-        $response = $response->withStatus(200);
-    } catch(Exception $e) {
-        $response = $response->withStatus(500);
-        $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-    }
-    return $response;
-});
+$app->delete('/job/{id}', '\JobEndPoint:delete');
 
 
 $app->run();
