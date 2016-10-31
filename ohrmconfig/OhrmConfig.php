@@ -23,7 +23,7 @@ class OhrmConfig
 
     }
 
-    public function getAppConfig() {
+    public function getSettings() {
         $config = [
                 'displayErrorDetails' => true,
                 'determineRouteBeforeAppMiddleware' => true,
@@ -41,8 +41,28 @@ class OhrmConfig
         return $config;
     }
 
-    public function decorateAppContainer($container) {
-        //to modify current dependancies and to add new ones
+    public function defineContainer($app) {
+        $container = $app->getContainer();
+        $container['logger'] = function($c) {
+            $logger = new \Monolog\Logger('ohrm_logger');
+            $file_handler = new \Monolog\Handler\StreamHandler("../logs/app.log");
+            $logger->pushHandler($file_handler);
+            return $logger;
+        };
+        $container['db'] = function ($c) {
+            $db = $c['settings']['db'];
+            $pdo = new PDO("mysql:host=" . $db['host'] . ";dbname=" . $db['dbname'],
+                $db['user'], $db['pass']);
+            $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+            return $pdo;
+        };
+        return $container;
+    }
+
+    public function defineMiddleware($app) {
+        $app->add(new AuthorizationMiddleware($app->getContainer()));
+        $app->add(new JsonTimestampMiddleware($app->getContainer()));
     }
 
     public function defineRoutes($app) {
