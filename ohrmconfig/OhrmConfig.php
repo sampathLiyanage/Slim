@@ -25,7 +25,6 @@ class OhrmConfig
 
     public function getAppConfig() {
         $config = [
-            'settings' => [
                 'displayErrorDetails' => true,
                 'determineRouteBeforeAppMiddleware' => true,
                 'logger' => [
@@ -33,7 +32,6 @@ class OhrmConfig
                     'level' => Monolog\Logger::DEBUG,
                     'path' => __DIR__ . '/../logs/app.log',
                 ],
-            ],
         ];
 
         $config['db']['host']   = "localhost";
@@ -50,7 +48,7 @@ class OhrmConfig
     public function defineRoutes($app) {
 
         //employees
-        $app->get('/employees', '\EmployeesEndPoint:get');
+        $app->get('/employees', '\EmployeesCustomEndPoint:get')->add(new EmployeesGetMiddleware($app->getContainer()));
 
         $app->get('/employee/{id}', '\EmployeesEndPoint:get');
 

@@ -5,7 +5,7 @@ use \Psr\Http\Message\ResponseInterface as Response;
 require '../vendor/autoload.php';
 
 $ohrmConfig = OhrmConfig::getInstance();
-$app = new \Slim\App(["settings" => $ohrmConfig->getAppConfig()]);
+$app = new \Slim\App(array('settings'=>$ohrmConfig->getAppConfig()));
 
 $container = $app->getContainer();
 $container['logger'] = function($c) {
@@ -22,6 +22,11 @@ $container['db'] = function ($c) {
     $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
     return $pdo;
 };
+
+//middleware to check if the header is_logged_in there
+$app->add(new AuthorizationMiddleware($container));
+$app->add(new JsonTimestampMiddleware($container));
+
 $ohrmConfig->decorateAppContainer($container);
 
 $ohrmConfig->defineRoutes($app);

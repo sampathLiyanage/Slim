@@ -10,6 +10,11 @@
 
 class EmployeesCustomEndPoint extends EmployeesEndPoint
 {
+    public function get($request, $response) {
+        $this->container->logger->info('executing employee get request');
+        parent::get($request, $response);
+    }
+
     public function post($request, $response) {
         $params = $request->getParsedBody();
         try {
