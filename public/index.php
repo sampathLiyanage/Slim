@@ -9,7 +9,7 @@ $app = new \Slim\App(["settings" => $ohrmConfig->getAppConfig()]);
 
 $container = $app->getContainer();
 $container['logger'] = function($c) {
-    $logger = new \Monolog\Logger('my_logger');
+    $logger = new \Monolog\Logger('ohrm_logger');
     $file_handler = new \Monolog\Handler\StreamHandler("../logs/app.log");
     $logger->pushHandler($file_handler);
     return $logger;

@@ -4,3 +4,6 @@ CREATE TABLE IF NOT EXISTS `task` (
   `description` varchar(1000) default NULL,
   PRIMARY KEY  (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+ALTER TABLE employee
+ADD date_of_birth date;

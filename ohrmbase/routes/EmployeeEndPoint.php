@@ -11,7 +11,7 @@
 class EmployeeEndPoint extends ResourceEndpoint
 {
 
-    public function post(Request $request, Response $response)
+    public function post($request, $response)
     {
         // TODO: Implement post() method.
     }

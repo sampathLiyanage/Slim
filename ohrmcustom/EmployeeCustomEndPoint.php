@@ -8,36 +8,19 @@
  */
 
 
-class EmployeeEndPoint extends ResourceEndpoint
+class EmployeeCustomEndPoint extends EmployeeEndPoint
 {
 
-    public function post(Request $request, Response $response)
+    public function post($request, $response)
     {
         // TODO: Implement post() method.
-    }
-
-    public function get($request, $response) {
-        $id = $request->getAttribute('id');
-        try {
-            $query = "SELECT * FROM employee WHERE id = ?";
-
-            $stmt = $this->container->db->prepare($query);
-            $stmt->execute(array($id));
-            $result = $stmt->fetchAll();
-            $response = $response->withStatus(200);
-            $response->getBody()->write(json_encode($result[0]));
-        } catch(Exception $e) {
-            $response = $response->withStatus(500);
-            $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-        }
-        return $response;
     }
 
     public function put($request, $response) {
         $id = $request->getAttribute('id');
         $params = $request->getParsedBody();
         try {
-            $query = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, phone_no = ? Where id=?";
+            $query = "UPDATE employee SET first_name = ?, last_name = ?, email = ?, phone_no = ?, date_of_birth = ? Where id=?";
 
             $stmt = $this->container->db->prepare($query);
             $stmt->execute(array(
@@ -45,6 +28,7 @@ class EmployeeEndPoint extends ResourceEndpoint
                 $params['last_name'],
                 $params['email'],
                 $params['phone_no'],
+                $params['date_of_birth'],
                 $id
             ));
             $response = $response->withStatus(200);
@@ -55,21 +39,4 @@ class EmployeeEndPoint extends ResourceEndpoint
         return $response;
     }
 
-    public function delete ($request, $response) {
-        $id = $request->getAttribute('id');
-        $params = $request->getParsedBody();
-        try {
-            $query = "DELETE FROM employee WHERE id = ?";
-
-            $stmt = $this->container->db->prepare($query);
-            $stmt->execute(array(
-                $id
-            ));
-            $response = $response->withStatus(200);
-        } catch(Exception $e) {
-            $response = $response->withStatus(500);
-            $response->getBody()->write('{"error":{"text":'. $e->getMessage() .'}}');
-        }
-        return $response;
-    }
 }

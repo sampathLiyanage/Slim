@@ -22,6 +22,7 @@ class EmployeesEndPoint extends CollectionEndpoint
                 $params['email'],
                 $params['phone_no']
             ));
+            $this->container->logger->info('employee added', array('name' => $params['first_name'].' '.$params['last_name']));
             $response = $response->withStatus(201);
         } catch(Exception $e) {
             $response = $response->withStatus(500);

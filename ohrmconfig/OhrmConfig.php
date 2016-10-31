@@ -27,7 +27,7 @@ class OhrmConfig
         $config = [
             'settings' => [
                 'displayErrorDetails' => true,
-
+                'determineRouteBeforeAppMiddleware' => true,
                 'logger' => [
                     'name' => 'slim-app',
                     'level' => Monolog\Logger::DEBUG,
@@ -35,8 +35,6 @@ class OhrmConfig
                 ],
             ],
         ];
-        $config['displayErrorDetails'] = true;
-        $config['addContentLengthHeader'] = false;
 
         $config['db']['host']   = "localhost";
         $config['db']['user']   = "root";
@@ -54,11 +52,11 @@ class OhrmConfig
         //employees
         $app->get('/employees', '\EmployeesEndPoint:get');
 
-        $app->get('/employee/{id}', '\EmployeeEndPoint:get');
+        $app->get('/employee/{id}', '\EmployeesEndPoint:get');
 
-        $app->post('/employees', '\EmployeeEndPoint:post');
+        $app->post('/employees', '\EmployeesCustomEndPoint:post');
 
-        $app->put('/employee/{id}', '\EmployeeEndPoint:put');
+        $app->put('/employee/{id}', '\EmployeeCustomEndPoint:put');
 
         $app->delete('/employee/{id}', '\EmployeeEndPoint:delete');
 
@@ -83,6 +81,7 @@ class OhrmConfig
         $app->put('/task/{id}', '\EmployeeTaskEndPoint:put');
 
         $app->delete('/task/{id}', '\EmployeeTaskEndPoint:delete');
+
     }
 
 
