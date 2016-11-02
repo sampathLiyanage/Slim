@@ -12,4 +12,6 @@ $ohrmConfig->defineContainer($app);
 $ohrmConfig->defineMiddleware($app);
 $ohrmConfig->defineRoutes($app);
 
+$ohrmConfig->defineEventListners($app);
+
 $app->run();

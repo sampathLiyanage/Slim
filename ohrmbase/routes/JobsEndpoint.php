@@ -17,11 +17,16 @@ class JobsEndPoint extends CollectionEndpoint
         try {
             $query = "INSERT INTO job (job_title,salary) VALUES (?,?)";
 
-            $stmt = $this->db->prepare($query);
+            $stmt = $this->container->db->prepare($query);
             $stmt->execute(array(
                 $params['job_title'],
                 $params['salary']
             ));
+
+            OhrmEventsDispatcher::getInstance()->dispatch(JobCreateEvent::NAME, new JobCreateEvent(array(
+                $params['job_title'],
+                $params['salary']
+            )));
             $response = $response->withStatus(201);
         } catch(Exception $e) {
             $response = $response->withStatus(500);

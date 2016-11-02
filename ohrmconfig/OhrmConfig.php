@@ -83,7 +83,7 @@ class OhrmConfig
 
         $app->get('/job/{id}', '\JobEndPoint:get');
 
-        $app->post('/jobs', '\JobEndPoint:post');
+        $app->post('/jobs', '\JobsEndPoint:post');
 
         $app->put('/job/{id}', '\JobEndPoint:put');
 
@@ -100,6 +100,12 @@ class OhrmConfig
 
         $app->delete('/task/{id}', '\EmployeeTaskEndPoint:delete');
 
+    }
+
+    public function defineEventListners($app) {
+        $container = $app->getContainer();
+        OhrmEventsDispatcher::getInstance()->addListener(JobCreateEvent::NAME, array(new JobCreateEventListner($container['logger']), 'onCreate'));
+        OhrmEventsDispatcher::getInstance()->addListener(JobCreateEvent::NAME, array(new JobCreateCustomEventListner($container['logger']), 'onCreate'),1);
     }
 
 
