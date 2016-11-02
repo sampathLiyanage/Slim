@@ -108,5 +108,9 @@ class OhrmConfig
         OhrmEventsDispatcher::getInstance()->addListener(JobCreateEvent::NAME, array(new JobCreateCustomEventListner($container['logger']), 'onCreate'),1);
     }
 
+    public function defineCliCommands($cli) {
+        $cli->add(new \AppBundle\Command\GetUserCountCommand());
+    }
+
 
 }

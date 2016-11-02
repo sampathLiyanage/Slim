@@ -1,0 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: buddhika
+ * Date: 11/3/16
+ * Time: 2:12 AM
+ */
+
+use Symfony\Component\Console\Application;
+require 'vendor/autoload.php';
+
+$ohrmConfig = OhrmConfig::getInstance();
+$cli = new Application();
+$ohrmConfig->defineCliCommands($cli);
+$cli->run();
