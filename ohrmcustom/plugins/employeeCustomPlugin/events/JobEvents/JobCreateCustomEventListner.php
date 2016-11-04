@@ -8,15 +8,10 @@
  */
 use Symfony\Component\EventDispatcher\Event;
 
-class JobCreateCustomEventListner
+class JobCreateCustomEventListner extends JobCreateEventListner
 {
-    public function __construct($logger)
-    {
-        $this->logger = $logger;
-    }
-
     public function onCreate(Event $event) {
-        $this->logger->info('Job Created Custom Event Triggered', $event->getJob());
+        $this->container->logger->info('Job Created Custom Event Triggered', $event->getJob());
         $event->stopPropagation();
     }
 }

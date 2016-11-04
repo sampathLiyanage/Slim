@@ -9,7 +9,7 @@
 use Symfony\Component\Console\Application;
 require 'vendor/autoload.php';
 
-$ohrmConfig = OhrmConfig::getInstance();
+$ohrmProvider = OhrmProvider::getInstance();
 $cli = new Application();
-$ohrmConfig->defineCliCommands($cli);
+$ohrmProvider->defineCliCommands($cli);
 $cli->run();

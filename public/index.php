@@ -4,14 +4,33 @@ use \Psr\Http\Message\ResponseInterface as Response;
 
 require '../vendor/autoload.php';
 
-$ohrmConfig = OhrmConfig::getInstance();
-$settings = $ohrmConfig->getSettings();
-$app = new \Slim\App(array('settings'=>$settings));
+//settings
+$config = [
+    'displayErrorDetails' => true,
+    'determineRouteBeforeAppMiddleware' => true,
+    'logger' => [
+        'name' => 'slim-app',
+        'level' => Monolog\Logger::DEBUG,
+        'path' => __DIR__ . '/../logs/app.log',
+    ],
+];
+$config['db']['host']   = "localhost";
+$config['db']['user']   = "root";
+$config['db']['pass']   = "pass";
+$config['db']['dbname'] = "slim";
 
-$ohrmConfig->defineContainer($app);
-$ohrmConfig->defineMiddleware($app);
-$ohrmConfig->defineRoutes($app);
+$app = new \Slim\App(array('settings'=>$config));
 
-$ohrmConfig->defineEventListners($app);
+$pluginProviders = array();
+$pluginProviders[] = new CoreCustomPluginProvider();
+$pluginProviders[] = new EmployeeCustomPluginProvider();
+
+$ohrmProvider = OhrmProvider::getInstance();
+$ohrmProvider->setPluginProviders($pluginProviders);
+
+$ohrmProvider->defineContainer($app);
+$ohrmProvider->defineMiddleware($app);
+$ohrmProvider->defineRoutes($app);
+$ohrmProvider->defineEventListners($app);
 
 $app->run();

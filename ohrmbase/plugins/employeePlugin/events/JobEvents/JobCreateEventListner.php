@@ -10,12 +10,12 @@ use Symfony\Component\EventDispatcher\Event;
 
 class JobCreateEventListner
 {
-    public function __construct($logger)
+    public function __construct($container)
     {
-        $this->logger = $logger;
+        $this->container = $container;
     }
 
     public function onCreate(Event $event) {
-        $this->logger->info('Job Created Event Triggered', $event->getJob());
+        $this->container->logger->info('Job Created Event Triggered', $event->getJob());
     }
 }
